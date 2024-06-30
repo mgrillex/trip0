@@ -1,0 +1,92 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Patient {
+  availableMeals EnumPatientAvailableMeals[]
+  createdAt      DateTime                    @default(now())
+  dietKind       String?
+  entryDate      DateTime?
+  id             String                      @id @default(cuid())
+  leavingDate    DateTime?
+  patientId      String?
+  patientName    String?
+  updatedAt      DateTime                    @updatedAt
+}
+
+model Diet {
+  availableMeals EnumDietAvailableMeals[]
+  createdAt      DateTime                 @default(now())
+  dietCode       String?
+  dietName       String?
+  id             String                   @id @default(cuid())
+  updatedAt      DateTime                 @updatedAt
+}
+
+model Meal {
+  createdAt       DateTime    @default(now())
+  department      Department? @relation(fields: [departmentId], references: [id])
+  departmentId    String?
+  id              String      @id @default(cuid())
+  mealIngredients String?
+  mealName        String?
+  updatedAt       DateTime    @updatedAt
+}
+
+model Inventory {
+  createdAt         DateTime    @default(now())
+  department        Department? @relation(fields: [departmentId], references: [id])
+  departmentId      String?
+  expirationDate    DateTime?
+  id                String      @id @default(cuid())
+  inventoryItemName String?
+  quantity          Int?
+  updatedAt         DateTime    @updatedAt
+}
+
+model Department {
+  createdAt              DateTime     @default(now())
+  departmentName         String?
+  id                     String       @id @default(cuid())
+  ingredients            Ingredient[]
+  inventories            Inventory[]
+  meals                  Meal[]
+  totalRequiredItems     Int?
+  totalRequiredMaterials Int?
+  updatedAt              DateTime     @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Ingredient {
+  createdAt       DateTime    @default(now())
+  department      Department? @relation(fields: [departmentId], references: [id])
+  departmentId    String?
+  id              String      @id @default(cuid())
+  itemName        String?
+  quantityInGrams Float?
+  updatedAt       DateTime    @updatedAt
+}
+
+enum EnumPatientAvailableMeals {
+  Option1
+}
+
+enum EnumDietAvailableMeals {
+  Option1
+}
